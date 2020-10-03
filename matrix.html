@@ -1,0 +1,71 @@
+<html>
+	<head>
+	</head>
+	<body>
+		<div id='log'></div>
+		<div id='matrix'></div>
+		<script>
+			var M=[];
+			function Create(M,N=3) {
+				for (var i=0;i<N;i++) 
+					M.push(new Array(N));
+				return(M);
+			}
+			function Output(M) {
+				for (var i=0;i<M.length;i++) {
+					document.getElementById('matrix').innerHTML+='<br>'+M[i];
+					console.log(M[i]);
+				}
+				document.getElementById('matrix').innerHTML+='<br>';
+			}
+			function Multiply(M,A,B) { //M=A.B
+				for (var i=0;i<A.length;i++) {
+					for(var j=0;j<B.length;j++) {
+						M[i][j]=0;
+						for (var r=0; r<N; r++) 
+							M[i][j]+=A[i][r]*B[r][j];
+					}
+				}
+				Output(M);
+			}
+			function R(M,a,b,p=1,q=1) { //Ra->pRa+qRb in matrix M
+				for (var j=0;j<M.length;j++) {
+					M[a][j]=p*M[a][j]+q*M[b][j];
+				}
+				Output(M);
+				document.getElementById('log').innerHTML+='<br>'+'R'+a+'→'+p+'R'+a+' + '+q+'R'+b;
+			}
+			function Auto(M) {
+				for (var j=0;j<M.length;j++) {
+					for (var i=M.length-1;i>j;i--)
+						R(M,i,j,M[j][j],-1*M[i][j]);
+				} //Makes it into upper triangular matrix
+				for (j=M.length-1;j>0;j--) {
+					for (i=0;j>i;i++)
+						R(M,i,j,M[j][j],-1*M[i][j]);
+				} //Makes it into diagonol matrix
+			}
+			function Input(M) {
+				for (var i=0;i<M.length;i++) {
+					for (var j=0;j<M.length;j++)
+						M[i][j]=prompt('M['+i+']['+j+']?');
+				}
+			}
+			function Det(M) {
+				if (M.length==1)
+					return M[0][0];
+				else {
+					var D=0;
+					for (var j=0;j<M.length;j++)
+						D+= Math.pow(-1,0+j) * M[0][j] * Det(M.filter((_, i) => i!==0 ).map(r => r.filter((_, i) =>  i!==j)));
+					return D;
+				}
+			}
+		</script>
+		<button onclick="Create(M,Number(prompt('Enter N size of matrix')))">Create</button>
+		<button onclick='Input(M)'>Input</button>
+		<button onclick='Output(M)'>Output</button>
+		<button onclick='Auto(M)'>Gaussian Elimination</button>
+		<button onclick='alert(Det(M))'>Laplace Expansion</button>
+	</body>
+</html>
